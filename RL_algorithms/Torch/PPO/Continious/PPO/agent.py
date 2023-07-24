@@ -68,7 +68,7 @@ class Agent:
             logp_a = self.actor._log_prob_from_distribution(policy, action)
             value = self.critic(observation)
 
-            return action.numpy(),  logp_a.numpy(), value.numpy()
+            return action.cpu().numpy(),  logp_a.cpu().numpy(), value.cpu().numpy()
             
     def learn(self):
         for _ in range(self.n_epoch):

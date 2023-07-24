@@ -39,3 +39,9 @@ register(
     entry_point="SpaceRobotEnv.envs:SpaceRobotReorientation",
     max_episode_steps=512,
 )
+
+register(
+    id="SpaceRobotDualArmWithRot-v0",
+    entry_point="SpaceRobotEnv.envs:SpaceRobotDualArmWithRot",
+    max_episode_steps=512,
+)

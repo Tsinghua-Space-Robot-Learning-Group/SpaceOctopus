@@ -30,7 +30,7 @@ if __name__ == '__main__':
                     model_name_actor = "space_robot_actor.pt",
                     model_name_critic = "space_robot_critic.pt")
     n_iter = 3000
-    figure_file = 'RL_algorithms/Torch/PPO/Continious/PPO/plots/space_robot_performance.png'
+    figure_file = 'RL_algorithms/Torch/PPO/Continious/PPO/plots/space_robot_performance1.png'
     best_score = env.reward_range[0]
     score_history = []
     n_steps = 0
@@ -62,8 +62,8 @@ if __name__ == '__main__':
 
         if avg_score>best_score:
             best_score= avg_score
-            agent.save_models()
-        print('episode', i , 'score %.1f', 'avg_score %.1f' %avg_score,
+            # agent.save_models()
+        print('episode', i , 'score %.1f' %score, 'avg_score %.1f' %avg_score,
         'time_steps',n_steps, 'learning_steps', learn_iters)
 
     x = [i+1 for i in range(len(score_history))]
