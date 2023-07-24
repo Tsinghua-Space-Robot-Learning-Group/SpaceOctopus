@@ -158,7 +158,7 @@ def main(args):
     with torch.no_grad():
         frames = []
         for eval_step in range(all_args.episode_length):
-            print("step: ",eval_step)
+            # print("step: ",eval_step)
             # env.env.render()
             # print("initial: ",env.env.initial_gripper1_pos,env.env.initial_gripper2_pos,env.env.initial_gripper1_rot,env.env.initial_gripper2_rot)
             action = []

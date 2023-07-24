@@ -479,9 +479,9 @@ class SpacerobotEnv(RobotEnv):
         goal_rot1 = np.array([0,0,0],dtype=np.float32)
         goal_rot2 = np.array([0,0,0],dtype=np.float32)
 
-        goal_pos1[0] = self.initial_gripper1_pos[0] - np.random.uniform(0.10, 0.25)
-        goal_pos1[1] = self.initial_gripper1_pos[1] - np.random.uniform(0.15, 0.30)
-        goal_pos1[2] = self.initial_gripper1_pos[2] + np.random.uniform(-0.10, 0.10)
+        goal_pos1[0] = self.initial_gripper1_pos[0] - np.random.uniform(0.05, 0.25)
+        goal_pos1[1] = self.initial_gripper1_pos[1] - np.random.uniform(0.15, 0.35)
+        goal_pos1[2] = self.initial_gripper1_pos[2] + np.random.uniform(-0.10, 0.20)
 
         goal_rot1[0] = self.initial_gripper1_rot[0] + np.random.uniform(1.00, 1.50)
         goal_rot1[1] = self.initial_gripper1_rot[1] + np.random.uniform(1.20, 1.70)
