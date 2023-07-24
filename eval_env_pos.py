@@ -12,7 +12,7 @@ from gym import spaces
 
 parent_dir = os.path.abspath(os.path.join(os.getcwd(), "."))
 sys.path.append(parent_dir)
-sys.path.append(parent_dir+"/RL_algorithms/Torch/on-policy/onpolicy")
+sys.path.append(parent_dir+"/RL_algorithms/Torch/MAPPO/onpolicy")
 from algorithms.r_mappo.algorithm.r_actor_critic import R_Actor
 from envs.spacerobot.SpaceRobotDualArmOnlyPos_Env import DualArmWithRot
 from config import get_config
@@ -62,7 +62,7 @@ def main(args):
 
     for i in range(all_args.num_agents):
         act = R_Actor(all_args,env.observation_space[i],env.action_space[i])
-        act.load_state_dict(torch.load("./RL_algorithms/Torch/on-policy/onpolicy/scripts/results/SpaceRobotEnv/SpaceRobotDualArmWithRot/mappo/check/run23/models/actor_agent"+str(i)+".pt"))
+        act.load_state_dict(torch.load("./RL_algorithms/Torch/MAPPO/onpolicy/scripts/results/SpaceRobotEnv/SpaceRobotDualArmWithRot/mappo/check/run23/models/actor_agent"+str(i)+".pt"))
         actors.append(act)
 
     with torch.no_grad():
@@ -84,7 +84,7 @@ def main(args):
                 # print(eval_step,eval_action)
                 action.append(eval_action)
 
-            obs, eval_rewards, done, infos = env.step(np.stack(action).squeeze())
+            obs, eval_rewards, done, infos = env.step(np.stack(action).squeeze().reshape(all_args.num_agents,3))
             eval_episode_rewards.append(eval_rewards)
         
         # writer = imageio.get_writer(parent_dir + "/render.gif")

@@ -17,7 +17,8 @@ sys.path.append(parent_dir)
 sys.path.append(parent_dir+"/RL_algorithms/Torch/MAPPO/onpolicy")
 
 from config import get_config
-from envs.spacerobot.SpaceRobotDualArmOnlyPos_Env import DualArmWithRot
+from envs.spacerobot.SpaceRobotDualArmOnlyPos_Env import DualArmWithRot # test if less agents work
+# from envs.spacerobot.SpaceRobotDualArmWithRot_env import DualArmWithRot # four agents environment
 from envs.env_wrappers import SubprocVecEnv, DummyVecEnv
 
 def make_train_env(all_args):

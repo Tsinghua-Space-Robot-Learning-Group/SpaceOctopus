@@ -60,9 +60,8 @@ class DualArmWithRot(object):
         
         #action:a list, contains num_agent elements,each element is a (single_action_dim,)shape array. 
         a = np.stack(actions)
-        # assert a.shape == (self.num_agents,self.single_action_dim)
+        assert a.shape == (self.num_agents,self.single_action_dim)
         a0 = actions[0]
-        # a0 = actions
         # print("action: ",a0)
         # a0 = actions
         a1 = np.zeros(3)

@@ -21,5 +21,6 @@ CUDA_VISIBLE_DEVICES=0 python RL_algorithms/Torch/MAPPO/onpolicy/scripts/train/t
 --n_rollout_threads 128  --use_wandb --share_policy --share_reward --hidden_size 1024 --layer_N 2 --ppo_epoch 10 \
 --save_interval 200 --log_interval 5 \
 --entropy_coef 0.1 \
+--use_valuenorm --use_feature_normalization \
 # --lr 8e-4 --critic_lr 8e-4 \
 # --use_popart --use_valuenorm \
