@@ -104,7 +104,7 @@ Make sure you have install the on-policy package.
 Run the follpwing commands to train spacerobot: 
 ```
 cd SpaceRobot/SpaceRobotEnv
-./RL_algorithms/Torch/on-policy/onpolicy/scripts/train_spacerobot.sh
+./RL_algorithms/Torch/MAPPO/onpolicy/scripts/train_spacerobot.sh
 ```
 
 ## 3.Train
