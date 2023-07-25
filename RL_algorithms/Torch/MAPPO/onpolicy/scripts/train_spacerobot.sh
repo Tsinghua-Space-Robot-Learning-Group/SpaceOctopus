@@ -3,7 +3,7 @@
 env="SpaceRobotEnv"
 scenario="SpaceRobotDualArmWithRot"
 algo="mappo" # "rmappo" "ippo"
-exp="check"
+exp="OneArmPos"
 
 # SpaceRobot param
 # num_agents=4

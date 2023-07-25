@@ -74,6 +74,7 @@ def main(args):
             for agent_id in range(all_args.num_agents):
                 actor = actors[agent_id]
                 actor.eval()
+                # print("observation: ",np.array(list(obs[agent_id,:])).reshape(1,28),)
                 eval_action,_,rnn_states_actor = actor(
                     np.array(list(obs[agent_id,:])).reshape(1,28),
                     eval_rnn_states,
@@ -85,6 +86,7 @@ def main(args):
                 action.append(eval_action)
 
             obs, eval_rewards, done, infos = env.step(np.stack(action).squeeze().reshape(all_args.num_agents,3))
+            # print("action: ",np.stack(action).squeeze().reshape(all_args.num_agents,3))
             eval_episode_rewards.append(eval_rewards)
         
         # writer = imageio.get_writer(parent_dir + "/render.gif")

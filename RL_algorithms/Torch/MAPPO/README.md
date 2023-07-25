@@ -98,6 +98,15 @@ There are 3 Cooperative scenarios in MPE:
 
 Please see the [football](https://github.com/google-research/football/blob/master/README.md) repository to install the football environment.
 
+### 2.5 SpaceRobot
+
+Make sure you have install the on-policy package. 
+Run the follpwing commands to train spacerobot: 
+```
+cd SpaceRobot/SpaceRobotEnv
+./RL_algorithms/Torch/on-policy/onpolicy/scripts/train_spacerobot.sh
+```
+
 ## 3.Train
 Here we use train_mpe.sh as an example:
 ```

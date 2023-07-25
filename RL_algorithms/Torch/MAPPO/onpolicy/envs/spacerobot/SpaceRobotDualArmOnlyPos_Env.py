@@ -80,6 +80,7 @@ class DualArmWithRot(object):
         # rd1 = goal_distance(a[:3], d[:3])
         # rr1 = 0.1 * goal_distance(a[3:6], d[3:6])
         # print("achieved goal:",a,"\ndesired goal:",d)
+        # print(observation["observation_0"][25:28])
         # print("r0:",- (0.001 * rd1 ** 2 + np.log10(rd1 ** 2 + 1e-6)))
         # print("r1:", - (0.001 * rr1 ** 2 + np.log10(rr1 ** 2 + 1e-6)))
         for i in range(self.num_agents):
