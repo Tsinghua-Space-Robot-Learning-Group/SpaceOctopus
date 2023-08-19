@@ -62,19 +62,21 @@ def main(args):
 
     for i in range(all_args.num_agents):
         act = R_Actor(all_args,env.observation_space[i],env.action_space[i])
-        act.load_state_dict(torch.load("./RL_algorithms/Torch/MAPPO/onpolicy/scripts/results/SpaceRobotEnv/SpaceRobotDualArmWithRot/mappo/check/run23/models/actor_agent"+str(i)+".pt"))
+        act.load_state_dict(torch.load("./RL_algorithms/Torch/MAPPO/onpolicy/scripts/results/SpaceRobotEnv/SpaceRobotDualArmWithRot/mappo/OneArm/run3/models/actor_agent"+str(i)+".pt"))
         actors.append(act)
+        # print(act.act.action_out.logstd._bias)
 
     with torch.no_grad():
         # print(env.env.initial_gripper1_pos,env.env.initial_gripper1_rot,env.env.initial_gripper2_pos,env.env.initial_gripper2_rot)
         for eval_step in range(all_args.episode_length):
-            print("step: ",eval_step)
-            # env.env.render()
+            # print("step: ",eval_step)
+            env.env.render()
             action = []
             for agent_id in range(all_args.num_agents):
                 actor = actors[agent_id]
                 actor.eval()
-                # print("observation: ",np.array(list(obs[agent_id,:])).reshape(1,28),)
+                print(actor.act.action_out.log_std)
+                print("observation: ",np.array(list(obs[agent_id,:])).reshape(1,28),)
                 eval_action,_,rnn_states_actor = actor(
                     np.array(list(obs[agent_id,:])).reshape(1,28),
                     eval_rnn_states,
@@ -82,12 +84,14 @@ def main(args):
                     deterministic=True,
                 )
                 eval_action = eval_action.detach().cpu().numpy()
-                # print(eval_step,eval_action)
+                print("step: ",eval_step,"action: ",eval_action)
                 action.append(eval_action)
 
             obs, eval_rewards, done, infos = env.step(np.stack(action).squeeze().reshape(all_args.num_agents,3))
+            print("reward: ",eval_rewards)
             # print("action: ",np.stack(action).squeeze().reshape(all_args.num_agents,3))
             eval_episode_rewards.append(eval_rewards)
+        print("episode reward: ",np.array(eval_episode_rewards).sum())
         
         # writer = imageio.get_writer(parent_dir + "/render.gif")
         # # print('reward is {}'.format(self.reward_lst))

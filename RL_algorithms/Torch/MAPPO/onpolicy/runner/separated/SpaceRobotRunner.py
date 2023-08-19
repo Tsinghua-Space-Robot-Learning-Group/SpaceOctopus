@@ -41,6 +41,7 @@ class SpaceRobotRunner(Runner):
             
             reward_list = []
             for step in range(self.episode_length):
+                # print("train step: ",step)
                 # Sample actions
                 (
                     values,
@@ -48,11 +49,11 @@ class SpaceRobotRunner(Runner):
                     action_log_probs,
                     rnn_states,
                     rnn_states_critic,
-                    actions_env,
-                ) = self.collect(step)
+                ) = self.collect(step)  #actions: [envs, agents, dim]
 
                 # Obser reward and next obs
-                obs, rewards, dones, infos = self.envs.step(actions_env)
+                obs, rewards, dones, infos = self.envs.step(actions)    #obs shape: (num_envs, num_agents, single_obs_dim)
+                # print("step: ",step,"\tobservation: ",obs)
 
                 data = (
                     obs,
@@ -117,6 +118,7 @@ class SpaceRobotRunner(Runner):
                                 * self.episode_length
                             }
                         )
+                        # print("reward: ",np.mean(self.buffer[agent_id].rewards)* self.episode_length)
                 self.log_train(train_infos, total_num_steps)
 
 
@@ -126,12 +128,12 @@ class SpaceRobotRunner(Runner):
 
     def warmup(self):
         # reset env
-        obs = self.envs.reset()
+        obs = self.envs.reset()  #obs shape: (num_envs, num_agents, single_obs_dim)
 
         share_obs = []
         for o in obs:
             share_obs.append(list(chain(*o)))
-        share_obs = np.array(share_obs)
+        share_obs = np.array(share_obs) #share obs: (num_envs, num_agents * single_obs_dim)
 
         for agent_id in range(self.num_agents):
             if not self.use_centralized_V:
@@ -189,13 +191,6 @@ class SpaceRobotRunner(Runner):
             rnn_states_critic.append(_t2n(rnn_state_critic))
 
         # [envs, agents, dim]
-        actions_env = []
-        for i in range(self.n_rollout_threads):
-            one_hot_action_env = []
-            for temp_action_env in temp_actions_env:
-                one_hot_action_env.append(temp_action_env[i])
-            actions_env.append(one_hot_action_env)
-
         values = np.array(values).transpose(1, 0, 2)
         actions = np.array(actions).transpose(1, 0, 2)
         action_log_probs = np.array(action_log_probs).transpose(1, 0, 2)
@@ -208,7 +203,6 @@ class SpaceRobotRunner(Runner):
             action_log_probs,
             rnn_states,
             rnn_states_critic,
-            actions_env,
         )
 
     def insert(self, data):

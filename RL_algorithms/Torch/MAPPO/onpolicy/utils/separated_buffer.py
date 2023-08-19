@@ -75,7 +75,9 @@ class SeparatedReplayBuffer(object):
             self.active_masks[self.step + 1] = active_masks.copy()
         if available_actions is not None:
             self.available_actions[self.step + 1] = available_actions.copy()
-
+        
+        # print("buffer step: ",self.step)
+        # print("buffer obs: ",self.obs[self.step])
         self.step = (self.step + 1) % self.episode_length
 
     def chooseinsert(self, share_obs, obs, rnn_states, rnn_states_critic, actions, action_log_probs,

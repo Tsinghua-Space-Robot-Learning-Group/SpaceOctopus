@@ -36,8 +36,7 @@ def make_train_env(all_args):
     if all_args.n_rollout_threads == 1:
         return DummyVecEnv([get_env_fn(0)])
     else:
-        return SubprocVecEnv([get_env_fn(i) for i in range(
-            all_args.n_rollout_threads)])
+        return SubprocVecEnv([get_env_fn(i) for i in range(all_args.n_rollout_threads)])
 
 
 def make_eval_env(all_args):
@@ -55,8 +54,7 @@ def make_eval_env(all_args):
     if all_args.n_eval_rollout_threads == 1:
         return DummyVecEnv([get_env_fn(0)])
     else:
-        return SubprocVecEnv([get_env_fn(i) for i in range(
-            all_args.n_eval_rollout_threads)])
+        return SubprocVecEnv([get_env_fn(i) for i in range(all_args.n_eval_rollout_threads)])
 
 
 def parse_args(args, parser):
@@ -87,7 +85,7 @@ def main(args):
         all_args.use_recurrent_policy = False 
         all_args.use_naive_recurrent_policy = False
     elif all_args.algorithm_name == "ippo":
-        print("u are choosing to use ippo, we set use_centralized_V to be False. Note that GRF is a fully observed game, so ippo is rmappo.")
+        print("u are choosing to use ippo, we set use_centralized_V to be False")
         all_args.use_centralized_V = False
     else:
         raise NotImplementedError
@@ -115,13 +113,11 @@ def main(args):
     if all_args.use_wandb:
         run = wandb.init(config=all_args,
                          project=all_args.env_name,
-                         entity=all_args.wandb_name,
+                         entity=all_args.user_name,
                          notes=socket.gethostname(),
-                         name="-".join([
-                            all_args.algorithm_name,
-                            all_args.experiment_name,
-                            "seed" + str(all_args.seed)
-                         ]),
+                         name=str(all_args.algorithm_name) + "_" +
+                         str(all_args.experiment_name) +
+                         "_seed" + str(all_args.seed),
                          group=all_args.scenario_name,
                          dir=str(run_dir),
                          job_type="training",
@@ -139,13 +135,9 @@ def main(args):
         if not run_dir.exists():
             os.makedirs(str(run_dir))
 
-    setproctitle.setproctitle("-".join([
-        all_args.env_name, 
-        all_args.scenario_name, 
-        all_args.algorithm_name, 
-        all_args.experiment_name
-    ]) + "@" + all_args.user_name)
-    
+    setproctitle.setproctitle(str(all_args.algorithm_name) + "-" + \
+        str(all_args.env_name) + "-" + str(all_args.experiment_name) + "@" + str(all_args.user_name))
+
     # seed
     torch.manual_seed(all_args.seed)
     torch.cuda.manual_seed_all(all_args.seed)

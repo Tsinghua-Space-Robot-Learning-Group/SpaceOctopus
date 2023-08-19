@@ -313,7 +313,8 @@ class SpacerobotEnv(RobotEnv):
             # "r1": -(0.001 * rd1 ** 2 + np.log10(rd1 ** 2 + 1e-6)) - (0.001 * rr1 ** 2 + np.log10(rr1 ** 2 + 1e-6)),
             # "r2": -(0.001 * rd2 ** 2 + np.log10(rd2 ** 2 + 1e-6)) - (0.001 * rr2 ** 2 + np.log10(rr2 ** 2 + 1e-6)),
             # "r3": -(0.001 * rd2 ** 2 + np.log10(rd2 ** 2 + 1e-6)) - (0.001 * rr2 ** 2 + np.log10(rr2 ** 2 + 1e-6)),
-            "r0": - (0.001 * rd1 ** 2 + np.log10(rd1 ** 2 + 1e-6) + 0.01 * l0),
+            # "r0": - (rd1 > self.distance_threshold).astype(np.float32),
+            "r0": - (0.001 * rd1 ** 2 + np.log10(rd1 ** 2 + 1e-6) + 0.01 * tt0 + 0.01 * l0),
             "r1": - (0.001 * rr1 ** 2 + np.log10(rr1 ** 2 + 1e-6) + 0.05 * tt1),
             "r2": - (0.001 * rd2 ** 2 + np.log10(rd2 ** 2 + 1e-6) + 0.01 * l2),
             "r3": - (0.001 * rr2 ** 2 + np.log10(rr2 ** 2 + 1e-6) + 0.05 * tt3),
@@ -479,9 +480,9 @@ class SpacerobotEnv(RobotEnv):
         goal_rot1 = np.array([0,0,0],dtype=np.float32)
         goal_rot2 = np.array([0,0,0],dtype=np.float32)
 
-        goal_pos1[0] = self.initial_gripper1_pos[0] - np.random.uniform(0.05, 0.25)
-        goal_pos1[1] = self.initial_gripper1_pos[1] - np.random.uniform(0.15, 0.35)
-        goal_pos1[2] = self.initial_gripper1_pos[2] + np.random.uniform(-0.10, 0.20)
+        goal_pos1[0] = self.initial_gripper1_pos[0] - np.random.uniform(0.05, 0.15)
+        goal_pos1[1] = self.initial_gripper1_pos[1] - np.random.uniform(0.10, 0.20)
+        goal_pos1[2] = self.initial_gripper1_pos[2] + np.random.uniform(-0.10, 0.10)
 
         goal_rot1[0] = self.initial_gripper1_rot[0] + np.random.uniform(1.00, 1.50)
         goal_rot1[1] = self.initial_gripper1_rot[1] + np.random.uniform(1.20, 1.70)
@@ -501,7 +502,7 @@ class SpacerobotEnv(RobotEnv):
 
         # goal_rot1[0] = self.initial_gripper1_rot[0] + 0.5
         # goal_rot1[1] = self.initial_gripper1_rot[1] + 0.1
-        # goal_rot1[2] = self.initial_gripper1_rot[2] + 0.2
+        # goal_rot1[2] = self.initial_gripper1_rot[2] + 0.4
 
         # goal_pos2[0] = self.initial_gripper2_pos[0] - 0.2
         # goal_pos2[1] = self.initial_gripper2_pos[1] + 0.3

@@ -43,5 +43,5 @@ register(
 register(
     id="SpaceRobotDualArmWithRot-v0",
     entry_point="SpaceRobotEnv.envs:SpaceRobotDualArmWithRot",
-    max_episode_steps=512,
+    max_episode_steps=50,
 )

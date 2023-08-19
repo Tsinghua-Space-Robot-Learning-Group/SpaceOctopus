@@ -139,17 +139,18 @@ class ShareVecEnv(ABC):
 
 def worker(remote, parent_remote, env_fn_wrapper):
     parent_remote.close()
-    env = env_fn_wrapper.x()
+    env = env_fn_wrapper.x()    #这里的env就是SpaceRobotEnvDualArmWithRot_Env中定义的DualArmWithRot多智能体环境
     while True:
         cmd, data = remote.recv()
         if cmd == 'step':
-            ob, reward, done, info = env.step(data)
+            ob, reward, done, info = env.step(data)   #ob, reward, done都是(num_agents,)的ndarray，不会进入第一个循环
             if 'bool' in done.__class__.__name__:
                 if done:
                     ob = env.reset()
             else:
                 if np.all(done):
                     ob = env.reset()
+                    # print("env reset")
 
             remote.send((ob, reward, done, info))
         elif cmd == 'reset':
@@ -256,13 +257,16 @@ class SubprocVecEnv(ShareVecEnv):
 
     def step_async(self, actions):
         for remote, action in zip(self.remotes, actions):
+            #action: a array, contains num_agent elements,each element is a (single_action_dim,)shape array. 
             remote.send(('step', action))
         self.waiting = True
 
     def step_wait(self):
         results = [remote.recv() for remote in self.remotes]
         self.waiting = False
-        obs, rews, dones, infos = zip(*results)
+        obs, rews, dones, infos = zip(*results)     #obs shape: (num_envs, num_agents, single_obs_dim)
+        # print("obs shape: ",np.stack(obs).shape)
+        # print("total obs: ",np.stack(obs))
         return np.stack(obs), np.stack(rews), np.stack(dones), infos
 
     def reset(self):

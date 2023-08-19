@@ -29,20 +29,19 @@ class DualArmWithRot(object):
         self.observation_space = []
         self.share_observation_space = []
 
-        u_action_space_1 = spaces.Box(
-            low=low[0:3],
-            high=high[0:3],
-            dtype=np.float32,
-        )
-        # u_action_space_2 = spaces.Box(
-        #     low=low[3:6],
-        #     high=high[3:6],
+        # u_action_space_1 = spaces.Box(
+        #     low=low[0:3],
+        #     high=high[0:3],
         #     dtype=np.float32,
         # )
-        self.action_space.append(u_action_space_1)
-        # self.action_space.append(u_action_space_2)
 
         for i in range(self.num_agents):
+            u_action_space = spaces.Box(
+                low=low[self.single_action_dim*i:self.single_action_dim*(i+1)],
+                high=high[self.single_action_dim*i:self.single_action_dim*(i+1)],
+                dtype=np.float32,
+            )
+            self.action_space.append(u_action_space)
             # observation space
             u_observationn_space = spaces.Box(-np.inf, np.inf, shape=(self.single_obs_dim,),dtype=np.float32)
             self.observation_space.append(u_observationn_space)
@@ -73,8 +72,9 @@ class DualArmWithRot(object):
         # print(a)
         a = np.stack(a)
         # print(a.shape)
-        actions = a.reshape(12,)
-        observation, reward, done, info = self.env.step(actions)
+        act = a.reshape(12,)
+        observation, reward, done, info = self.env.step(act)
+        # print("outer loop step done: ",done)
         # a = observation["achieved_goal"]
         # d = observation["desired_goal"]
         # rd1 = goal_distance(a[:3], d[:3])
@@ -103,5 +103,8 @@ class DualArmWithRot(object):
     def render(self, mode="human"):
         return self.env.render(mode)
 
-    def seed(self, seed):
-        return self.env.seed
+    def seed(self, seed=None):
+        if seed is None:
+            np.random.seed(1)
+        else:
+            np.random.seed(seed)

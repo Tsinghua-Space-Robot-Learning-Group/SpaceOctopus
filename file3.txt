@@ -1,0 +1,1 @@
+env is SpaceRobotEnv, scenario is SpaceRobotDualArmWithRot, algo is mappo, exp is OneArmPos, num agents is 2
