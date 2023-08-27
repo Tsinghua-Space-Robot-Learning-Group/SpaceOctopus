@@ -16,10 +16,10 @@ parent_dir = os.path.abspath(os.path.join(os.getcwd(), "."))
 sys.path.append(parent_dir)
 sys.path.append(parent_dir+"/RL_algorithms/Torch/MAPPO/onpolicy")
 
-from config import get_config
-from envs.spacerobot.SpaceRobotDualArmOnlyPos_Env import DualArmWithRot # test if less agents work
+from onpolicy.config import get_config
+from onpolicy.envs.spacerobot.SpaceRobotDualArmOnlyPos_env import DualArmWithRot # test if less agents work
 # from envs.spacerobot.SpaceRobotDualArmWithRot_env import DualArmWithRot # four agents environment
-from envs.env_wrappers import SubprocVecEnv, DummyVecEnv
+from onpolicy.envs.env_wrappers import SubprocVecEnv, DummyVecEnv
 
 def make_train_env(all_args):
     def get_env_fn(rank):
@@ -108,6 +108,7 @@ def main(args):
                    0] + "/results") / all_args.env_name / all_args.scenario_name / all_args.algorithm_name / all_args.experiment_name
     if not run_dir.exists():
         os.makedirs(str(run_dir))
+    print(run_dir)
 
     # wandb
     if all_args.use_wandb:
@@ -158,10 +159,8 @@ def main(args):
     }
 
     # run experiments
-    if all_args.share_policy:
-        from onpolicy.runner.shared.SpaceRobotRunner import SpaceRobotRunner as Runner
-    else:
-        from onpolicy.runner.separated.SpaceRobotRunner import SpaceRobotRunner as Runner
+
+    from onpolicy.runner.separated.spacerobot_runner import SpaceRobotRunner as Runner
 
     runner = Runner(config)
     runner.run()

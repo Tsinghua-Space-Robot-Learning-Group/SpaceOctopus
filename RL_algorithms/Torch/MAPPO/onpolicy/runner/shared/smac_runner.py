@@ -63,7 +63,7 @@ class SMACRunner(Runner):
                                 self.num_env_steps,
                                 int(total_num_steps / (end - start))))
 
-                if self.env_name == "StarCraft2":
+                if self.env_name == "StarCraft2" or self.env_name == "SMACv2" or self.env_name == "SMAC" or self.env_name == "StarCraft2v2":
                     battles_won = []
                     battles_game = []
                     incre_battles_won = []
@@ -173,12 +173,21 @@ class SMACRunner(Runner):
 
         while True:
             self.trainer.prep_rollout()
-            eval_actions, eval_rnn_states = \
-                self.trainer.policy.act(np.concatenate(eval_obs),
-                                        np.concatenate(eval_rnn_states),
-                                        np.concatenate(eval_masks),
-                                        np.concatenate(eval_available_actions),
-                                        deterministic=True)
+            if self.algorithm_name == "mat" or self.algorithm_name == "mat_dec":
+                eval_actions, eval_rnn_states = \
+                    self.trainer.policy.act(np.concatenate(eval_share_obs),
+                                            np.concatenate(eval_obs),
+                                            np.concatenate(eval_rnn_states),
+                                            np.concatenate(eval_masks),
+                                            np.concatenate(eval_available_actions),
+                                            deterministic=True)
+            else:
+                eval_actions, eval_rnn_states = \
+                    self.trainer.policy.act(np.concatenate(eval_obs),
+                                            np.concatenate(eval_rnn_states),
+                                            np.concatenate(eval_masks),
+                                            np.concatenate(eval_available_actions),
+                                            deterministic=True)
             eval_actions = np.array(np.split(_t2n(eval_actions), self.n_eval_rollout_threads))
             eval_rnn_states = np.array(np.split(_t2n(eval_rnn_states), self.n_eval_rollout_threads))
             

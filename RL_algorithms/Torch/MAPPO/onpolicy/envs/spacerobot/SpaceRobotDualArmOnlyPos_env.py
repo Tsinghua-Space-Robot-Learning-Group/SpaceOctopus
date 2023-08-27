@@ -18,7 +18,7 @@ class DualArmWithRot(object):
         self.env = gym.make("SpaceRobotDualArmWithRot-v0")
         self.num_agents = args.num_agents
         self.share_reward = args.share_reward
-        self.single_obs_dim = 37
+        self.single_obs_dim = 28
         self.single_action_dim = 3
         self.share_observation_dim = self.single_obs_dim * self.num_agents
 
@@ -30,14 +30,12 @@ class DualArmWithRot(object):
         self.share_observation_space = []
 
         for i in range(self.num_agents):
-            # physical action space
             u_action_space = spaces.Box(
                 low=low[self.single_action_dim*i:self.single_action_dim*(i+1)],
                 high=high[self.single_action_dim*i:self.single_action_dim*(i+1)],
                 dtype=np.float32,
             )
             self.action_space.append(u_action_space)
-
             # observation space
             u_observationn_space = spaces.Box(-np.inf, np.inf, shape=(self.single_obs_dim,),dtype=np.float32)
             self.observation_space.append(u_observationn_space)
@@ -55,16 +53,26 @@ class DualArmWithRot(object):
         
         #action:a list, contains num_agent elements,each element is a (single_action_dim,)shape array. 
         a = np.stack(actions)
-        # print(a)
-        # print(a.shape)
         assert a.shape == (self.num_agents,self.single_action_dim)
-        actions = a.reshape(12,)
-        observation, reward, done, info = self.env.step(actions)
+        a0 = actions[0]
+        a1 = np.zeros(3)
+        # a1 = actions[1]
+        a2 = np.zeros(3)
+        # a2 = actions[1]
+        a3 = np.zeros(3)
+        a = [a0, a1, a2, a3]
+        # print(a)
+        a = np.stack(a)
+        # print(a.shape)
+        act = a.reshape(12,)
+        observation, reward, done, info = self.env.step(act)
+        # print("outer loop step done: ",done)
         # a = observation["achieved_goal"]
         # d = observation["desired_goal"]
         # rd1 = goal_distance(a[:3], d[:3])
         # rr1 = 0.1 * goal_distance(a[3:6], d[3:6])
-        # print("achieved goal:",a,"\n desired goal:",d)
+        # print("achieved goal:",a,"\ndesired goal:",d)
+        # print(observation["observation_0"][25:28])
         # print("r0:",- (0.001 * rd1 ** 2 + np.log10(rd1 ** 2 + 1e-6)))
         # print("r1:", - (0.001 * rr1 ** 2 + np.log10(rr1 ** 2 + 1e-6)))
         for i in range(self.num_agents):
@@ -84,8 +92,11 @@ class DualArmWithRot(object):
     def close(self):
         return self.env.close
 
-    def render(self, mode="rgb_array"):
+    def render(self, mode="human"):
         return self.env.render(mode)
 
-    def seed(self, seed):
-        return self.env.seed
+    def seed(self, seed=None):
+        if seed is None:
+            np.random.seed(1)
+        else:
+            np.random.seed(seed)

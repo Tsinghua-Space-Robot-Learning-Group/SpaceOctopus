@@ -1,10 +1,3 @@
-"""
-# @Time    : 2021/7/1 7:14 下午
-# @Author  : hezhiqiang01
-# @Email   : hezhiqiang01@baidu.com
-# @File    : env_runner.py
-"""
-
 import time
 import wandb
 import os
@@ -12,8 +5,8 @@ import numpy as np
 from itertools import chain
 import torch
 
-from utils.util import update_linear_schedule
-from runner.separated.base_runner import Runner
+from onpolicy.utils.util import update_linear_schedule
+from onpolicy.runner.separated.base_runner import Runner
 import imageio
 
 
@@ -39,7 +32,6 @@ class SpaceRobotRunner(Runner):
                 for agent_id in range(self.num_agents):
                     self.trainer[agent_id].policy.lr_decay(episode, episodes)
             
-            reward_list = []
             for step in range(self.episode_length):
                 # print("train step: ",step)
                 # Sample actions
@@ -69,8 +61,6 @@ class SpaceRobotRunner(Runner):
 
                 # insert data into buffer
                 self.insert(data)
-                reward_list.append(rewards)
-            # print(np.stack(reward_list).shape)  
 
             # compute return and update network
             self.compute()
@@ -103,10 +93,6 @@ class SpaceRobotRunner(Runner):
 
                 if self.env_name == "SpaceRobotEnv":
                     for agent_id in range(self.num_agents):
-                        # idv_rews = np.stack(reward_list)[:,:,agent_id]
-                        # train_infos[agent_id].update(
-                        #     {"individual_rewards": np.mean(idv_rews)}
-                        # )
                         # print(np.mean(
                         #             self.buffer[agent_id].rewards
                         #         ))
@@ -118,7 +104,6 @@ class SpaceRobotRunner(Runner):
                                 * self.episode_length
                             }
                         )
-                        # print("reward: ",np.mean(self.buffer[agent_id].rewards)* self.episode_length)
                 self.log_train(train_infos, total_num_steps)
 
 
@@ -145,7 +130,6 @@ class SpaceRobotRunner(Runner):
     def collect(self, step):
         values = []
         actions = []
-        temp_actions_env = []
         action_log_probs = []
         rnn_states = []
         rnn_states_critic = []
@@ -163,29 +147,7 @@ class SpaceRobotRunner(Runner):
             )
             # [agents, envs, dim]
             values.append(_t2n(value))
-            action = _t2n(action)
-            # rearrange action
-            if self.envs.action_space[agent_id].__class__.__name__ == "MultiDiscrete":
-                for i in range(self.envs.action_space[agent_id].shape):
-                    uc_action_env = np.eye(
-                        self.envs.action_space[agent_id].high[i] + 1
-                    )[action[:, i]]
-                    if i == 0:
-                        action_env = uc_action_env
-                    else:
-                        action_env = np.concatenate((action_env, uc_action_env), axis=1)
-            elif self.envs.action_space[agent_id].__class__.__name__ == "Discrete":
-                action_env = np.squeeze(
-                    np.eye(self.envs.action_space[agent_id].n)[action], 1
-                )
-            else:
-                # TODO 这里改造成自己环境需要的形式即可
-                # TODO Here, you can change the action_env to the form you need
-                action_env = action
-                # raise NotImplementedError
-
-            actions.append(action)
-            temp_actions_env.append(action_env)
+            actions.append(_t2n(action))
             action_log_probs.append(_t2n(action_log_prob))
             rnn_states.append(_t2n(rnn_state))
             rnn_states_critic.append(_t2n(rnn_state_critic))

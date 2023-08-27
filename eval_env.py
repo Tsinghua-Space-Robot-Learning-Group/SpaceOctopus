@@ -103,9 +103,9 @@ from gym import spaces
 parent_dir = os.path.abspath(os.path.join(os.getcwd(), "."))
 sys.path.append(parent_dir)
 sys.path.append(parent_dir+"/RL_algorithms/Torch/on-policy/onpolicy")
-from algorithms.r_mappo.algorithm.r_actor_critic import R_Actor
-from envs.spacerobot.SpaceRobotDualArmWithRot_Env import DualArmWithRot
-from config import get_config
+from onpolicy.algorithms.r_mappo.algorithm.r_actor_critic import R_Actor
+from onpolicy.envs.spacerobot.SpaceRobotDualArmOnlyPos_env import DualArmWithRot
+from onpolicy.config import get_config
 
 def _t2n(x):
     return x.detach().cpu().numpy()
@@ -152,14 +152,14 @@ def main(args):
 
     for i in range(4):
         act = R_Actor(all_args,env.observation_space[i],env.action_space[i])
-        act.load_state_dict(torch.load("./RL_algorithms/Torch/on-policy/onpolicy/scripts/results/SpaceRobotEnv/SpaceRobotDualArmWithRot/mappo/check/run21/models/actor_agent"+str(i)+".pt"))
+        act.load_state_dict(torch.load("./RL_algorithms/Torch/MAPPO/onpolicy/scripts/results/SpaceRobotEnv/SpaceRobotDualArmWithRot/mappo/OneArmPos/run1/models/actor_agent"+str(i)+".pt"))
         actors.append(act)
 
     with torch.no_grad():
         frames = []
         for eval_step in range(all_args.episode_length):
             # print("step: ",eval_step)
-            # env.env.render()
+            env.env.render()
             # print("initial: ",env.env.initial_gripper1_pos,env.env.initial_gripper2_pos,env.env.initial_gripper1_rot,env.env.initial_gripper2_rot)
             action = []
             for agent_id in range(4):

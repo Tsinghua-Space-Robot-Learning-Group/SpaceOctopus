@@ -13,9 +13,9 @@ from gym import spaces
 parent_dir = os.path.abspath(os.path.join(os.getcwd(), "."))
 sys.path.append(parent_dir)
 sys.path.append(parent_dir+"/RL_algorithms/Torch/MAPPO/onpolicy")
-from algorithms.r_mappo.algorithm.r_actor_critic import R_Actor
-from envs.spacerobot.SpaceRobotDualArmOnlyPos_Env import DualArmWithRot
-from config import get_config
+from onpolicy.algorithms.r_mappo.algorithm.r_actor_critic import R_Actor
+from onpolicy.envs.spacerobot.SpaceRobotDualArmOnlyPos_env import DualArmWithRot
+from onpolicy.config import get_config
 
 def _t2n(x):
     return x.detach().cpu().numpy()
@@ -62,7 +62,7 @@ def main(args):
 
     for i in range(all_args.num_agents):
         act = R_Actor(all_args,env.observation_space[i],env.action_space[i])
-        act.load_state_dict(torch.load("./RL_algorithms/Torch/MAPPO/onpolicy/scripts/results/SpaceRobotEnv/SpaceRobotDualArmWithRot/mappo/OneArm/run3/models/actor_agent"+str(i)+".pt"))
+        act.load_state_dict(torch.load("./RL_algorithms/Torch/MAPPO/onpolicy/scripts/results/SpaceRobotEnv/SpaceRobotDualArmWithRot/mappo/OneArmPos/run2/models/actor_agent"+str(i)+".pt"))
         actors.append(act)
         # print(act.act.action_out.logstd._bias)
 
@@ -75,13 +75,13 @@ def main(args):
             for agent_id in range(all_args.num_agents):
                 actor = actors[agent_id]
                 actor.eval()
-                print(actor.act.action_out.log_std)
+                print(actor.act.action_out.logstd._bias)
                 print("observation: ",np.array(list(obs[agent_id,:])).reshape(1,28),)
                 eval_action,_,rnn_states_actor = actor(
                     np.array(list(obs[agent_id,:])).reshape(1,28),
                     eval_rnn_states,
                     eval_masks,
-                    deterministic=True,
+                    deterministic=False,
                 )
                 eval_action = eval_action.detach().cpu().numpy()
                 print("step: ",eval_step,"action: ",eval_action)
