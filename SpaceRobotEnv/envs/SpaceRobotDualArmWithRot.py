@@ -55,18 +55,6 @@ class RobotEnv(gym.GoalEnv):
                 observation=spaces.Box(
                     -np.inf, np.inf, shape=obs["observation"].shape, dtype="float32"
                 ),
-                # observation1=spaces.Box(
-                #     -np.inf, np.inf, shape=obs["observation_0"].shape, dtype="float32"
-                # ),
-                # observation2=spaces.Box(
-                #     -np.inf, np.inf, shape=obs["observation_1"].shape, dtype="float32"
-                # ),
-                # observation3=spaces.Box(
-                #     -np.inf, np.inf, shape=obs["observation_2"].shape, dtype="float32"
-                # ),
-                # observation4=spaces.Box(
-                #     -np.inf, np.inf, shape=obs["observation_3"].shape, dtype="float32"
-                # ),
             )
         )
 
@@ -74,17 +62,6 @@ class RobotEnv(gym.GoalEnv):
         bounds = self.model.actuator_ctrlrange.copy()
         low, high = bounds.T
         self.action_space = spaces.Box(low=low, high=high, dtype=np.float32)
-
-        # self.action_space = []
-        # for i in range(4):
-        #     # physical action space
-        #     u_action_space = spaces.Box(
-        #         low=low[3*i:3*(i+1)],
-        #         high=high[3*i:3*(i+1)],
-        #         dtype=np.float32
-        #     )
-        #     self.action_space.append(u_action_space)
-        
         return self.action_space
 
     @property
@@ -103,7 +80,7 @@ class RobotEnv(gym.GoalEnv):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def step(self, action, t= None):
+    def step(self, action):
         assert action.shape == (12,)
         old_action = self.sim.data.ctrl.copy() * (1 / 0.8)
         action = np.clip(action, self.action_space.low, self.action_space.high)
@@ -119,12 +96,6 @@ class RobotEnv(gym.GoalEnv):
         reward = self.compute_reward(
             obs["achieved_goal"], self.goal.copy(), action, old_action, info
         )
-        if t is not None:
-            cost = self.compute_cost(t)
-        # reward = self.compute_reward(obs['achieved_goal'], self.goal, info) + self.compute_reward(obs['achieved_goal1'], self.goal1, info)
-        if self.pro_type == 'CMDP':
-
-            return obs, reward, cost, done, info
         return obs, reward, done, info
 
     def reset(self):
@@ -139,13 +110,13 @@ class RobotEnv(gym.GoalEnv):
         while not did_reset_sim:
             did_reset_sim = self._reset_sim()
 
-        self.goal = self._sample_goal().copy()
+        self.goal = self._sample_goal()
         obs = self._get_obs()
 
         # TODO: set the position of cube
 
-        body_id = self.sim.model.geom_name2id("cube")
-        self.sim.model.geom_pos[body_id] = np.array([0, 0, 6])
+        # body_id = self.sim.model.geom_name2id("cube")
+        # self.sim.model.geom_pos[body_id] = np.array([0, 0, 6])
         return obs
 
     def close(self):
@@ -159,11 +130,9 @@ class RobotEnv(gym.GoalEnv):
         if mode == "rgb_array":
             self._get_viewer(mode).render(width, height)
             # window size used for old mujoco-py:
-            datargb, datadepth = self._get_viewer(mode).read_pixels(
-                width, height, depth=True
-            )
+            data = self._get_viewer(mode).read_pixels(width, height, depth=False)
             # original image is upside-down, so flip it
-            return datargb[::-1, :, :], datadepth[::-1]
+            return data[::-1, :, :]
         elif mode == "human":
             self._get_viewer(mode).render()
 
@@ -176,7 +145,7 @@ class RobotEnv(gym.GoalEnv):
                 self._viewer_setup()
 
             elif mode == "rgb_array":
-                self.viewer = mujoco_py.MjRenderContextOffscreen(self.sim, device_id=0)
+                self.viewer = mujoco_py.MjRenderContextOffscreen(self.sim, device_id=-1)
                 self._viewer_setup()
                 # self.viewer.cam.trackbodyid = 0
                 # latest modification
@@ -258,7 +227,6 @@ class SpacerobotEnv(RobotEnv):
         rotdis_threshold,
         initial_qpos,
         reward_type,
-        pro_type,
         c_coeff,
         dr_ratio,
     ):
@@ -278,7 +246,6 @@ class SpacerobotEnv(RobotEnv):
         self.rotdis_threshold = rotdis_threshold
         self.reward_type = reward_type
         self.c_coeff = c_coeff
-        self.pro_type = pro_type
         self.dr_ratio = dr_ratio
 
         super(SpacerobotEnv, self).__init__(
@@ -315,7 +282,7 @@ class SpacerobotEnv(RobotEnv):
             # "r3": -(0.001 * rd2 ** 2 + np.log10(rd2 ** 2 + 1e-6)) - (0.001 * rr2 ** 2 + np.log10(rr2 ** 2 + 1e-6)),
             # "r0": - (rd1 > self.distance_threshold).astype(np.float32),
             # "r0": - (0.001 * rd1 ** 2 + np.log10(rd1 ** 2 + 1e-6) + 0.01 * tt0 + 0.01 * l0),
-            "r0": - (0.001 * rd1 ** 2 + np.log10(rd1 ** 2 + 1e-6+ 0.01 * l0)),
+            "r0": - (0.001 * rd1 ** 2 + np.log10(rd1 ** 2 + 1e-6) + 0.01 * l0),
             "r1": - (0.001 * rr1 ** 2 + np.log10(rr1 ** 2 + 1e-6)),
             "r2": - (0.001 * rd2 ** 2 + np.log10(rd2 ** 2 + 1e-6) + 0.01 * l2),
             "r3": - (0.001 * rr2 ** 2 + np.log10(rr2 ** 2 + 1e-6)),
@@ -335,26 +302,6 @@ class SpacerobotEnv(RobotEnv):
         # print("r0=", 0.001 * rd1 ** 2 , np.log10(rd1 ** 2 + 1e-6) , 0.01 * l0)
 
         return reward
-
-    def compute_cost(self, t):
-        # get the initial base attitude
-        post_base_att = self.sim.data.get_body_xquat("chasersat").copy()
-
-        # get the initial base attitude
-        post_base_pos = self.sim.data.get_body_xpos("chasersat").copy()
-
-        """ cost function is continue
-        """
-        cost = (
-            self.c_coeff
-            * t
-            * (
-                goal_distance(post_base_att, self.initial_base_att)
-                + goal_distance(post_base_pos, self.initial_base_pos)
-            )
-        )
-
-        return cost
 
     def _set_action(self, action):
         """
@@ -481,9 +428,9 @@ class SpacerobotEnv(RobotEnv):
         goal_rot1 = np.array([0,0,0],dtype=np.float32)
         goal_rot2 = np.array([0,0,0],dtype=np.float32)
 
-        # goal_pos1[0] = self.initial_gripper1_pos[0] - np.random.uniform(0.05, 0.15)
-        # goal_pos1[1] = self.initial_gripper1_pos[1] - np.random.uniform(0.10, 0.20)
-        # goal_pos1[2] = self.initial_gripper1_pos[2] + np.random.uniform(-0.10, 0.10)
+        goal_pos1[0] = self.initial_gripper1_pos[0] - np.random.uniform(0.05, 0.20)
+        goal_pos1[1] = self.initial_gripper1_pos[1] - np.random.uniform(0.05, 0.20)
+        goal_pos1[2] = self.initial_gripper1_pos[2] + np.random.uniform(-0.10, 0.10)
 
         # goal_rot1[0] = self.initial_gripper1_rot[0] + np.random.uniform(1.00, 1.50)
         # goal_rot1[1] = self.initial_gripper1_rot[1] + np.random.uniform(1.20, 1.70)
@@ -497,9 +444,9 @@ class SpacerobotEnv(RobotEnv):
         # goal_rot2[1] = self.initial_gripper2_rot[1] - np.random.uniform(1.20, 1.70) #So the target has opposite y and z.
         # goal_rot2[2] = self.initial_gripper2_rot[2] - np.random.uniform(0.80, 1.30)
 
-        goal_pos1[0] = self.initial_gripper1_pos[0] - 0.2
-        goal_pos1[1] = self.initial_gripper1_pos[1] - 0.3
-        goal_pos1[2] = self.initial_gripper1_pos[2] + 0.05
+        # goal_pos1[0] = self.initial_gripper1_pos[0] - 0.2
+        # goal_pos1[1] = self.initial_gripper1_pos[1] - 0.3
+        # goal_pos1[2] = self.initial_gripper1_pos[2] + 0.05
 
         goal_rot1[0] = self.initial_gripper1_rot[0] + 0.5
         goal_rot1[1] = self.initial_gripper1_rot[1] + 0.1
@@ -559,7 +506,7 @@ class SpacerobotEnv(RobotEnv):
 
 
 class SpaceRobotDualArmWithRot(SpacerobotEnv, gym.utils.EzPickle):
-    def __init__(self, reward_type="sparse", pro_type="MDP"):
+    def __init__(self, reward_type="sparse"):
         initial_qpos = {
             "arm:shoulder_pan_joint": 0.0,
             "arm:shoulder_lift_joint": -1.57,
@@ -582,7 +529,6 @@ class SpaceRobotDualArmWithRot(SpacerobotEnv, gym.utils.EzPickle):
             rotdis_threshold=0.05,
             initial_qpos=initial_qpos,
             reward_type=reward_type,
-            pro_type=pro_type,
             c_coeff=0.1,
             dr_ratio=0.2
         )

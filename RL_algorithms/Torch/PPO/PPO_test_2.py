@@ -26,16 +26,18 @@ import numpy as np
 import argparse
 import datetime
 import math
-import os 
-import sys
+import os
+import sys 
 from pathlib import Path
+from matplotlib import animation 
+import imageio
+from PIL import Image, ImageDraw
+
 
 parent_dir = os.path.abspath(os.path.join(os.getcwd(), "."))
 sys.path.append(parent_dir)
-sys.path.append(parent_dir+"/RL_algorithms/Torch/MAPPO/onpolicy")
 
 import SpaceRobotEnv
-from onpolicy.envs.spacerobot.SpaceRobotDualArmOnlyPos_env import DualArmWithRot # test if less agents work
 
 Transition = namedtuple('Transition', ('state', 'value', 'action', 'logproba', 'mask', 'next_state', 'reward'))
 EPS = 1e-10
@@ -50,7 +52,7 @@ if not save_dir.exists():
 class args(object):
     env_name = 'Hopper-v2'
     seed = 1234
-    num_episode = 300
+    num_episode = 1000
     batch_size = 2048
     max_step_per_round = 100
     gamma = 0.995
@@ -232,12 +234,13 @@ class Memory(object):
         return len(self.memory)
 
 def ppo(args):
-    env = DualArmWithRot()
-    num_inputs = env.observation_space[0].shape[0]
-    num_actions = env.action_space[0].shape[0]
+    env = gym.make("SpaceRobotState-v0")
+    num_inputs = env.observation_space["observation"].shape[0]
+    num_actions = env.action_space.shape[0]
 
     env.seed(args.seed)
     torch.manual_seed(args.seed)
+    np.random.seed(args.seed)
 
     network = ActorCritic(num_inputs, num_actions, layer_norm=args.layer_norm)
     optimizer = opt.Adam(network.parameters(), lr=args.lr)
@@ -259,7 +262,7 @@ def ppo(args):
         reward_list = []
         len_list = []
         while num_steps < args.batch_size:
-            state = env.reset()[0]
+            state = env.reset()["observation"]
             if args.state_norm:
                 state = running_state(state)
             reward_sum = 0
@@ -268,11 +271,13 @@ def ppo(args):
                 action, logproba = network.select_action(action_mean, action_logstd)
                 action = action.data.numpy()[0]
                 logproba = logproba.data.numpy()[0]
-                next_state, reward, done, _ = env.step(action.reshape(1,3))
-                next_state = next_state[0]
+                next_state, reward, done, _ = env.step(action)
+                next_state = next_state["observation"]
                 reward_sum += reward
                 if args.state_norm:
                     next_state = running_state(next_state)
+                # if t == args.max_step_per_round - 1:
+                    # done = True
                 mask = 0 if done else 1
 
                 memory.push(state, value, action, logproba, mask, next_state, reward)
@@ -368,11 +373,46 @@ def ppo(args):
                 g['lr'] = lr_now
 
         if i_episode % args.log_num_episode == 0:
+            # frames = []
+            # reward_rec = []
+            # reward_add = 0
+            # for step in range(2000):
+            #     # env.render()
+            #     frame = env.render("rgb_array")
+            #     frames.append(frame)
+            #     network.eval()
+            #     action_mean, action_logstd, value = network(Tensor(state).unsqueeze(0))
+            #     action, logproba = network.select_action(action_mean, action_logstd)
+            #     action = action.data.numpy()[0]
+            #     logproba = logproba.data.numpy()[0]
+            #     next_state, reward, done, _ = env.step(action)
+            #     next_state = next_state["observation"]
+            #     reward_add += reward
+            #     reward_rec.append(reward_add)
+            #     next_state = running_state(next_state)
+            #     mask = 0 if done else 1
+            #     state = next_state
+            #     if done:
+            #         break
+            # print(reward_add)
+            # writer = imageio.get_writer(parent_dir + "/render.gif")
+            # # print('reward is {}'.format(self.reward_lst))
+            # for frame, reward in zip(frames, reward_rec):
+            #     frame = Image.fromarray(frame)
+            #     draw = ImageDraw.Draw(frame)
+            #     draw.text((70, 70), '{}'.format(reward), fill=(255, 255, 255))
+            #     frame = np.array(frame)
+            #     writer.append_data(frame)
+            # writer.close()
+            # imageio.mimsave(str(parent_dir) + "/render.gif",frames,duration=0.1)
+            # env.close()
+
             print('Finished episode: {} Reward: {:.4f} total_loss = {:.4f} = {:.4f} + {} * {:.4f} + {} * {:.4f}' \
                 .format(i_episode, reward_record[-1]['meanepreward'], total_loss.data, loss_surr.data, args.loss_coeff_value, 
                 loss_value.data, args.loss_coeff_entropy, loss_entropy.data))
+            print(running_state.rs.mean, running_state.rs.std)
             print('-----------------')
-            torch.save(network.state_dict(), str(save_dir) + "/actor_agent2"  + ".pt")
+            torch.save(network.state_dict(), str(save_dir) + "/actor_agent5"  + ".pt")
 
     return reward_record
 
