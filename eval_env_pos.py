@@ -14,7 +14,7 @@ parent_dir = os.path.abspath(os.path.join(os.getcwd(), "."))
 sys.path.append(parent_dir)
 sys.path.append(parent_dir+"/RL_algorithms/Torch/MAPPO/onpolicy")
 from onpolicy.algorithms.r_mappo.algorithm.r_actor_critic import R_Actor
-from onpolicy.envs.spacerobot.SpaceRobotDualArmOnlyPos_env import DualArmWithRot
+from onpolicy.envs.spacerobot.SpaceRobotDualArmWithRot_env import DualArmWithRot
 from onpolicy.config import get_config
 
 def _t2n(x):
@@ -62,7 +62,7 @@ def main(args):
 
     for i in range(all_args.num_agents):
         act = R_Actor(all_args,env.observation_space[i],env.action_space[i])
-        act.load_state_dict(torch.load("./RL_algorithms/Torch/MAPPO/onpolicy/scripts/results/SpaceRobotEnv/SpaceRobotDualArmWithRot/mappo/OneArmPos/run5/models/actor_agent"+str(i)+".pt"))
+        act.load_state_dict(torch.load("./RL_algorithms/Torch/MAPPO/onpolicy/scripts/results/SpaceRobotEnv/SpaceRobotDualArmWithRot/mappo/FourAgents/run2/models/actor_agent"+str(i)+".pt"))
         actors.append(act)
         # print(act.act.action_out.logstd._bias)
 

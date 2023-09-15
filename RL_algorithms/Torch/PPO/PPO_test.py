@@ -35,7 +35,7 @@ sys.path.append(parent_dir)
 sys.path.append(parent_dir+"/RL_algorithms/Torch/MAPPO/onpolicy")
 
 import SpaceRobotEnv
-from onpolicy.envs.spacerobot.SpaceRobotDualArmOnlyPos_env import DualArmWithRot # test if less agents work
+from onpolicy.envs.spacerobot.SpaceRobotDualArmWithRot_env import DualArmWithRot # test if less agents work
 
 Transition = namedtuple('Transition', ('state', 'value', 'action', 'logproba', 'mask', 'next_state', 'reward'))
 EPS = 1e-10

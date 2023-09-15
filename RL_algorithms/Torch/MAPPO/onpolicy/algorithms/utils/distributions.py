@@ -84,6 +84,7 @@ class DiagGaussian(nn.Module):
 
     def forward(self, x):
         action_mean = torch.tanh(self.fc_mean(x))
+        # action_mean = self.fc_mean(x)
 
         #  An ugly hack for my KFAC implementation.
         zeros = torch.zeros(action_mean.size())

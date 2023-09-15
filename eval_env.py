@@ -104,7 +104,7 @@ parent_dir = os.path.abspath(os.path.join(os.getcwd(), "."))
 sys.path.append(parent_dir)
 sys.path.append(parent_dir+"/RL_algorithms/Torch/on-policy/onpolicy")
 from onpolicy.algorithms.r_mappo.algorithm.r_actor_critic import R_Actor
-from onpolicy.envs.spacerobot.SpaceRobotDualArmOnlyPos_env import DualArmWithRot
+from onpolicy.envs.spacerobot.SpaceRobotDualArmWithRot_env import DualArmWithRot
 from onpolicy.config import get_config
 
 def _t2n(x):

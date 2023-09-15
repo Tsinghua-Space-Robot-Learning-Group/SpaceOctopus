@@ -3,11 +3,11 @@
 env="SpaceRobotEnv"
 scenario="SpaceRobotDualArmWithRot"
 algo="mappo" # "rmappo" "ippo"
-exp="OneArmPos"
+exp="FourAgents"
 
 # SpaceRobot param
 # num_agents=4
-num_agents=1
+num_agents=4
 
 # train param
 num_env_steps=20000000 #20M
@@ -18,11 +18,11 @@ echo "env is ${env}, scenario is ${scenario}, algo is ${algo}, exp is ${exp}, nu
 CUDA_VISIBLE_DEVICES=0 python eval_env_pos.py \
 --env_name ${env} --scenario_name ${scenario} --algorithm_name ${algo} --experiment_name ${exp} --seed 1 \
 --num_agents ${num_agents} --num_env_steps ${num_env_steps} --episode_length ${episode_length} \
---n_rollout_threads 128  --use_wandb --share_policy --share_reward --hidden_size 128 --layer_N 2 --ppo_epoch 5 \
+--n_rollout_threads 128  --use_wandb --share_policy --share_reward --hidden_size 512 --layer_N 2 --ppo_epoch 5 \
 --save_interval 200 --log_interval 5 --entropy_coef 0.05
 # --use_valuenorm --use_popart --gamma 0.96 --use_policy_active_masks --use_value_active_masks  --use_ReLU  \
 # --entropy_coef 0.0 --lr 1e-3 --critic_lr 1e-3 \
 # --use_valuenorm \
-# --use_popart
+# --use_popart --share_reward 
 # --lr 1e-3 --critic_lr 1e-3 \
 # --use_feature_normalization --use_orthogonal \
