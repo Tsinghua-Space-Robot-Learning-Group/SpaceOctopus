@@ -357,7 +357,7 @@ class SpacerobotEnv(RobotEnv):
                 qvel_tem[:9].copy(),
                 grip_pos1,
                 grip_velp1,
-                self.goal[0:3].copy()
+                self.goal[0:6].copy()
             ]
         )
 
@@ -369,7 +369,7 @@ class SpacerobotEnv(RobotEnv):
                 qvel_tem[9:12].copy(),
                 grip_rot1,
                 grip_velr1,
-                self.goal[3:6].copy()
+                self.goal[0:6].copy()
             ]
         )
 
@@ -381,7 +381,7 @@ class SpacerobotEnv(RobotEnv):
                 qvel_tem[12:15].copy(),
                 grip_pos2,
                 grip_velp2,
-                self.goal[6:9].copy()
+                self.goal[6:12].copy()
             ]
         )
 
@@ -393,7 +393,7 @@ class SpacerobotEnv(RobotEnv):
                 qvel_tem[15:18].copy(),
                 grip_rot2,
                 grip_velr2,
-                self.goal[9:12].copy()
+                self.goal[6:12].copy()
             ]
         )
 
@@ -428,19 +428,19 @@ class SpacerobotEnv(RobotEnv):
         goal_rot1 = np.array([0,0,0],dtype=np.float32)
         goal_rot2 = np.array([0,0,0],dtype=np.float32)
 
-        goal_pos1[0] = self.initial_gripper1_pos[0] - np.random.uniform(0.05, 0.15)
-        goal_pos1[1] = self.initial_gripper1_pos[1] - np.random.uniform(0.10, 0.25)
+        goal_pos1[0] = self.initial_gripper1_pos[0] - np.random.uniform(-0.10, 0.15)
+        goal_pos1[1] = self.initial_gripper1_pos[1] - np.random.uniform(0.15, 0.35)
         goal_pos1[2] = self.initial_gripper1_pos[2] + np.random.uniform(-0.10, 0.10)
 
-        goal_rot1[0] = self.initial_gripper1_rot[0] + np.random.uniform(0.70, 1.20)
+        goal_rot1[0] = self.initial_gripper1_rot[0] + np.random.uniform(0.20, 0.70)
         goal_rot1[1] = self.initial_gripper1_rot[1] + np.random.uniform(0.10, 0.60)
         goal_rot1[2] = self.initial_gripper1_rot[2] + np.random.uniform(0.30, 0.80)
 
-        goal_pos2[0] = self.initial_gripper2_pos[0] - np.random.uniform(0.05, 0.15) #two end-effectors have the same x
-        goal_pos2[1] = self.initial_gripper2_pos[1] + np.random.uniform(0.10, 0.25) #twp end-effector have opposite y (minus)
+        goal_pos2[0] = self.initial_gripper2_pos[0] - np.random.uniform(-0.10, 0.15) #two end-effectors have the same x
+        goal_pos2[1] = self.initial_gripper2_pos[1] + np.random.uniform(0.15, 0.35) #twp end-effector have opposite y (minus)
         goal_pos2[2] = self.initial_gripper2_pos[2] - np.random.uniform(-0.10, 0.10) #two end-effector have different z 
 
-        goal_rot2[0] = self.initial_gripper2_rot[0] + np.random.uniform(0.70, 1.20) #the difference between two arms:rotate along x axis with pi deg
+        goal_rot2[0] = self.initial_gripper2_rot[0] + np.random.uniform(0.20, 0.70) #the difference between two arms:rotate along x axis with pi deg
         goal_rot2[1] = self.initial_gripper2_rot[1] - np.random.uniform(0.10, 0.60) #So the target has opposite y and z.
         goal_rot2[2] = self.initial_gripper2_rot[2] - np.random.uniform(0.30, 0.80)
 
@@ -508,12 +508,12 @@ class SpacerobotEnv(RobotEnv):
 class SpaceRobotDualArmWithRot(SpacerobotEnv, gym.utils.EzPickle):
     def __init__(self, reward_type="sparse"):
         initial_qpos = {
-            "arm:shoulder_pan_joint": 0.0,
+            "arm:shoulder_pan_joint": 1.57*2,
             "arm:shoulder_lift_joint": -1.57,
             "arm:elbow_joint": 0.0,
             "arm:wrist_1_joint": -1.57,
             "arm:wrist_2_joint": 0.0,
-            "arm:wrist_3_joint": 0.0,
+            "arm:wrist_3_joint": 1.57*2,
             "arm:shoulder_pan_joint1": 0.0,
             "arm:shoulder_lift_joint1": -1.57,
             "arm:elbow_joint1": 0.0,

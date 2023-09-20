@@ -11,7 +11,7 @@ num_agents=4
 
 # train param
 num_env_steps=20000000 #20M
-episode_length=100
+episode_length=200
 
 echo "env is ${env}, scenario is ${scenario}, algo is ${algo}, exp is ${exp}, num agents is ${num_agents}"
 

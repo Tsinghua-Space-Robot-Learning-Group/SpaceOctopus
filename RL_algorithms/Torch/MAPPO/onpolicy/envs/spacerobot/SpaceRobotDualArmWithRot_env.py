@@ -18,7 +18,7 @@ class DualArmWithRot(object):
         self.env = gym.make("SpaceRobotDualArmWithRot-v0")
         self.num_agents = args.num_agents
         self.share_reward = args.share_reward
-        self.single_obs_dim = 28
+        self.single_obs_dim = 31
         self.single_action_dim = 3
         self.share_observation_dim = self.single_obs_dim * self.num_agents
 
