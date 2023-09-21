@@ -62,7 +62,7 @@ def main(args):
 
     for i in range(all_args.num_agents):
         act = R_Actor(all_args,env.observation_space[i],env.action_space[i])
-        act.load_state_dict(torch.load("./RL_algorithms/Torch/MAPPO/onpolicy/scripts/results/SpaceRobotEnv/SpaceRobotDualArmWithRot/mappo/FourAgents/run5/models/actor_agent"+str(i)+".pt"))
+        act.load_state_dict(torch.load("./RL_algorithms/Torch/MAPPO/onpolicy/scripts/results/SpaceRobotEnv/SpaceRobotDualArmWithRot/mappo/FourAgents/run6/models/actor_agent"+str(i)+".pt"))
         actors.append(act)
         # print(act.act.action_out.logstd._bias)
 

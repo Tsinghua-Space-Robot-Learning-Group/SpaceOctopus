@@ -432,17 +432,17 @@ class SpacerobotEnv(RobotEnv):
         goal_pos1[1] = self.initial_gripper1_pos[1] - np.random.uniform(0.15, 0.35)
         goal_pos1[2] = self.initial_gripper1_pos[2] + np.random.uniform(-0.10, 0.10)
 
-        goal_rot1[0] = self.initial_gripper1_rot[0] + np.random.uniform(0.20, 0.70)
-        goal_rot1[1] = self.initial_gripper1_rot[1] + np.random.uniform(0.10, 0.60)
-        goal_rot1[2] = self.initial_gripper1_rot[2] + np.random.uniform(0.30, 0.80)
+        goal_rot1[0] = self.initial_gripper1_rot[0] + np.random.uniform(-0.20, 0.30)
+        goal_rot1[1] = self.initial_gripper1_rot[1] + np.random.uniform(-0.15, 0.35)
+        goal_rot1[2] = self.initial_gripper1_rot[2] + np.random.uniform(-0.30, 0.20)
 
         goal_pos2[0] = self.initial_gripper2_pos[0] - np.random.uniform(-0.10, 0.15) #two end-effectors have the same x
         goal_pos2[1] = self.initial_gripper2_pos[1] + np.random.uniform(0.15, 0.35) #twp end-effector have opposite y (minus)
         goal_pos2[2] = self.initial_gripper2_pos[2] - np.random.uniform(-0.10, 0.10) #two end-effector have different z 
 
-        goal_rot2[0] = self.initial_gripper2_rot[0] + np.random.uniform(0.20, 0.70) #the difference between two arms:rotate along x axis with pi deg
-        goal_rot2[1] = self.initial_gripper2_rot[1] - np.random.uniform(0.10, 0.60) #So the target has opposite y and z.
-        goal_rot2[2] = self.initial_gripper2_rot[2] - np.random.uniform(0.30, 0.80)
+        goal_rot2[0] = self.initial_gripper2_rot[0] + np.random.uniform(-0.20, 0.30) #the difference between two arms:rotate along x axis with pi deg
+        goal_rot2[1] = self.initial_gripper2_rot[1] - np.random.uniform(-0.15, 0.35) #So the target has opposite y and z.
+        goal_rot2[2] = self.initial_gripper2_rot[2] - np.random.uniform(-0.30, 0.20)
 
         # goal_pos1[0] = self.initial_gripper1_pos[0] - 0.2
         # goal_pos1[1] = self.initial_gripper1_pos[1] - 0.3
