@@ -45,3 +45,15 @@ register(
     entry_point="SpaceRobotEnv.envs:SpaceRobotDualArmWithRot",
     max_episode_steps=512,
 )
+
+register(
+    id="SpaceRobotFourArm-v0",
+    entry_point="SpaceRobotEnv.envs:SpaceRobotFourArm",
+    max_episode_steps=512,
+)
+
+register(
+    id="SpaceRobotBaseRot-v0",
+    entry_point="SpaceRobotEnv.envs:SpaceRobotBaseRot",
+    max_episode_steps=512,
+)

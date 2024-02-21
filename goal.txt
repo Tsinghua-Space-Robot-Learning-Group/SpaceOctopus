@@ -1,0 +1,70 @@
+[0.33494896, 1.3118865, 4.3755064, -0.06997222, -0.00937862, -0.05944595, 
+0.37716126, -1.2100896, 4.224915, -0.17249185, -0.27403075,  0.19058825, 
+0.43003255, 0.21381348, 5.326064, -0.80434984, 0.02859566, 0.28201598, 
+0.186473638, 2.65390587, 0.810219288, -0.674531,  -0.12910637, -0.05794614]
+
+[
+    0.29432666,  1.3777534,   4.3778887,   0.16373104,  0.23992744,  0.05128532,
+    0.4315827,  -1.2804029,   4.2666655,   0.03040494,  0.11790288, -0.04894744,
+    0.27814835,  0.29937622,  5.246062,   -1.0688201,   0.339479,    0.16324279,
+    0.43091363,  0.28066614,  2.7131298,  -0.89631516,  0.00982002, -0.03541239
+]
+
+4_arm_pos_rot:
+        goal_pos1 = np.array([0.3569468,   1.2775239,   4.3208117])
+        goal_rot1 = np.array([0.2514714,  -0.1013594,   0.18483946])
+        goal_pos2 = np.array([0.39633986, -1.23843396,  4.23199368])
+        goal_rot2 = np.array([-0.13400188, -0.04475628,  0.12607676])
+        goal_pos3 = np.array([0.27814835,  0.29937622,  5.246062])
+        goal_rot3 = np.array([-1.0688201,   0.489479,    0.06324279])
+        goal_pos4 = np.array([0.43091363,  0.28066614,  2.7131298])
+        goal_rot4 = np.array([-1.14631516,  -0.05982002, -0.08541239])
+
+
+            "arm:shoulder_pan_joint": 1.57*2,
+            "arm:shoulder_lift_joint": -1.57,
+            "arm:elbow_joint": 0.0,
+            "arm:wrist_1_joint": -1.57,
+            "arm:wrist_2_joint": 0.0,
+            "arm:wrist_3_joint": 1.57*2,
+            "arm:shoulder_pan_joint1": 0.0,
+            "arm:shoulder_lift_joint1": -1.57,
+            "arm:elbow_joint1": 0.0,
+            "arm:wrist_1_joint1": -1.57,
+            "arm:wrist_2_joint1": 0.0,
+            "arm:wrist_3_joint1": 0.0,
+            "arm:shoulder_pan_joint2": 0.0,
+            "arm:shoulder_lift_joint2": -1.57,
+            "arm:elbow_joint2": 0.0,
+            "arm:wrist_1_joint2": -1.57,
+            "arm:wrist_2_joint2": 0.0,
+            "arm:wrist_3_joint2": 0.0,
+            "arm:shoulder_pan_joint3": 1.57*2,
+            "arm:shoulder_lift_joint3": -1.57,
+            "arm:elbow_joint3": 0.0,
+            "arm:wrist_1_joint3": -1.57,
+            "arm:wrist_2_joint3": 0.0,
+            "arm:wrist_3_joint3": 1.57*2,            "arm:shoulder_pan_joint": 1.57*2,
+            "arm:shoulder_lift_joint": -1.57,
+            "arm:elbow_joint": 0.0,
+            "arm:wrist_1_joint": -1.57,
+            "arm:wrist_2_joint": 0.0,
+            "arm:wrist_3_joint": 1.57*2,
+            "arm:shoulder_pan_joint1": 0.0,
+            "arm:shoulder_lift_joint1": -1.57,
+            "arm:elbow_joint1": 0.0,
+            "arm:wrist_1_joint1": -1.57,
+            "arm:wrist_2_joint1": 0.0,
+            "arm:wrist_3_joint1": 0.0,
+            "arm:shoulder_pan_joint2": 0.0,
+            "arm:shoulder_lift_joint2": -1.57,
+            "arm:elbow_joint2": 0.0,
+            "arm:wrist_1_joint2": -1.57,
+            "arm:wrist_2_joint2": 0.0,
+            "arm:wrist_3_joint2": 0.0,
+            "arm:shoulder_pan_joint3": 1.57*2,
+            "arm:shoulder_lift_joint3": -1.57,
+            "arm:elbow_joint3": 0.0,
+            "arm:wrist_1_joint3": -1.57,
+            "arm:wrist_2_joint3": 0.0,
+            "arm:wrist_3_joint3": 1.57*2,

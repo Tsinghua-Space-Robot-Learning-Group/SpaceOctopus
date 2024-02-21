@@ -5,3 +5,5 @@ from .SpaceRobotImage import SpaceRobotImage
 from .SpaceRobotState import SpaceRobotState
 from .SpaceRobotCost import SpaceRobotCost
 from .SpaceRobotReorientation import SpaceRobotReorientation
+from .SpaceRobotFourArm import SpaceRobotFourArm
+from .SpaceRobotBaseRot import SpaceRobotBaseRot
