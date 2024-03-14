@@ -165,3 +165,7 @@ cython_debug/
 .idea/
 
 results/
+fig_plot/
+model/
+MADDPG/
+eval/

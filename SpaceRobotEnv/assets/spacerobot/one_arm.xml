@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<mujoco model="ur5">
+    <compiler angle="radian" coordinate="local" eulerseq="xyz" />
+    <option cone="elliptic" gravity="0 0 0" impratio="5" timestep="0.001" tolerance="1e-10" />
+    <default class="main">
+        <joint damping="0" armature="1" />
+        <geom condim="4" solimp="0.99 0.99 0.01" solref="0.01 1" />
+        <default class="arm1">
+            <joint damping="0" />
+        </default>
+        <default class="arm2">
+            <joint damping="0" />
+        </default>
+    </default>
+
+
+    <include file="asset.xml" />
+
+    <worldbody>
+
+        <include file="arm_v3.xml" />
+
+    </worldbody>
+
+    <!-- scalar_force = gain_term * (act or ctrl) + bias_term -->
+    <!-- default: fixed	gain_term = gainprm[0] -->
+    <!-- default: none	bias_term = 0 -->
+    <!--         affine	bias_term = biasprm[0] + biasprm[1]*length + biasprm[2]*velocity -->
+    <actuator>
+        <general biasprm="0 0 -100" biastype="affine" ctrllimited="true" ctrlrange="-2.0942 2.0942" forcelimited="true" forcerange="-150 150" gainprm="100 0 0" joint="arm:shoulder_pan_joint" name="arm:shoulder_pan_T" />
+        <general biasprm="0 0 -100" biastype="affine" ctrllimited="true" ctrlrange="-2.0942 2.0942" forcelimited="true" forcerange="-150 150" gainprm="100 0 0" joint="arm:shoulder_lift_joint" name="arm:shoulder_lift_T" />
+        <general biasprm="0 0 -100" biastype="affine" ctrllimited="true" ctrlrange="-2.0942 2.0942" forcelimited="true" forcerange="-150 150" gainprm="100 0 0" joint="arm:elbow_joint" name="arm:elbow_T" />
+        <general biasprm="0 0 -50" biastype="affine" ctrllimited="true" ctrlrange="-3.14 3.14" forcelimited="true" forcerange="-28 28" gainprm="50 0 0" joint="arm:wrist_1_joint" name="arm:wrist_1_T" />
+        <general biasprm="0 0 -50" biastype="affine" ctrllimited="true" ctrlrange="-3.14 3.14" forcelimited="true" forcerange="-28 28" gainprm="50 0 0" joint="arm:wrist_2_joint" name="arm:wrist_2_T" />
+        <general biasprm="0 0 -50" biastype="affine" ctrllimited="true" ctrlrange="-3.14 3.14" forcelimited="true" forcerange="-28 28" gainprm="50 0 0" joint="arm:wrist_3_joint" name="arm:wrist_3_T" />
+
+
+        <!-- <general ctrllimited="true" ctrlrange="-150 150" forcelimited="true" forcerange="-150 150" gainprm="1" joint="arm:shoulder_pan_joint" name="arm:shoulder_pan_T"/>
+        <general ctrllimited="true" ctrlrange="-150 150" forcelimited="true" forcerange="-150 150" gainprm="1" joint="arm:shoulder_lift_joint" name="arm:shoulder_lift_T"/>
+        <general ctrllimited="true" ctrlrange="-150 150" forcelimited="true" forcerange="-150 150" gainprm="1" joint="arm:elbow_joint" name="arm:elbow_T"/> -->
+        <!-- <general ctrllimited="true" ctrlrange="-28 28" forcelimited="true" forcerange="-28 28" gainprm="1" joint="arm:wrist_1_joint" name="arm:wrist_1_T"/>
+        <general ctrllimited="true" ctrlrange="-28 28" forcelimited="true" forcerange="-28 28" gainprm="1" joint="arm:wrist_2_joint" name="arm:wrist_2_T"/>
+        <general ctrllimited="true" ctrlrange="-28 28" forcelimited="true" forcerange="-28 28" gainprm="1" joint="arm:wrist_3_joint" name="arm:wrist_3_T"/> -->
+    </actuator>
+
+    <sensor>
+        <torque name="shoulder_sensor" site="shoulder_site" />
+        <torque name="upper_arm_sensor" site="upperarm_site" />
+        <torque name="forearm_sensor" site="forearm_site" />
+        <torque name="wrist1_sensor" site="wrist1_site" />
+        <torque name="wrist2_sensor" site="wrist2_site" />
+        <torque name="wrist3_sensor" site="wrist3_site" />
+
+    </sensor>
+</mujoco>

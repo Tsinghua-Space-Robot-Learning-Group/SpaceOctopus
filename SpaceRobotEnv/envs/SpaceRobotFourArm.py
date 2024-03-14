@@ -287,6 +287,15 @@ class SpacerobotEnv(RobotEnv):
         # tt6 = np.linalg.norm(action[18:21])**2
         tt7 = np.linalg.norm(action[21:24])**2
 
+        r0 = - (0.001 * rd1 ** 2 + np.log10(rd1 ** 2 + 1e-6) + 0.01 * l0)
+        r1 = - (0.001 * rr1 ** 2 + np.log10(rr1 ** 2 + 1e-6) + 0.05 * tt1)
+        r2 = - (0.001 * rd2 ** 2 + np.log10(rd2 ** 2 + 1e-6) + 0.01 * l2)
+        r3 = - (0.001 * rr2 ** 2 + np.log10(rr2 ** 2 + 1e-6) + 0.05 * tt3)
+        r4 = - (0.001 * rd3 ** 2 + np.log10(rd3 ** 2 + 1e-6) + 0.01 * l4)
+        r5 = - (0.001 * rr3 ** 2 + np.log10(rr3 ** 2 + 1e-6) + 0.05 * tt5)
+        r6 = - (0.001 * rd4 ** 2 + np.log10(rd4 ** 2 + 1e-6) + 0.01 * l6)
+        r7 = - (0.001 * rr4 ** 2 + np.log10(rr4 ** 2 + 1e-6) + 0.05 * tt7)
+
         reward = {
             "sparse": -(d > self.distance_threshold).astype(np.float32),
             # "r0": -(0.001 * rd1 ** 2 + np.log10(rd1 ** 2 + 1e-6)) - (0.001 * rr1 ** 2 + np.log10(rr1 ** 2 + 1e-6)),
@@ -295,15 +304,15 @@ class SpacerobotEnv(RobotEnv):
             # "r3": -(0.001 * rd2 ** 2 + np.log10(rd2 ** 2 + 1e-6)) - (0.001 * rr2 ** 2 + np.log10(rr2 ** 2 + 1e-6)),
             # "r0": - (rd1 > self.distance_threshold).astype(np.float32),
             # "r0": - (0.001 * rd1 ** 2 + np.log10(rd1 ** 2 + 1e-6) + 0.01 * tt0 + 0.01 * l0),
-            "r0": - (0.001 * rd1 ** 2 + np.log10(rd1 ** 2 + 1e-6) + 0.01 * l0),
+            "r0": r0,
             # "r0": - (0.001 * rd1 ** 2 + np.log10(rd1 ** 2 + 1e-6) + 0.01 * tt0),
-            "r1": - (0.001 * rr1 ** 2 + np.log10(rr1 ** 2 + 1e-6) + 0.05 * tt1),
-            "r2": - (0.001 * rd2 ** 2 + np.log10(rd2 ** 2 + 1e-6) + 0.01 * l2),
-            "r3": - (0.001 * rr2 ** 2 + np.log10(rr2 ** 2 + 1e-6) + 0.05 * tt3),
-            "r4": - (0.001 * rd3 ** 2 + np.log10(rd3 ** 2 + 1e-6) + 0.01 * l4),
-            "r5": - (0.001 * rr3 ** 2 + np.log10(rr3 ** 2 + 1e-6) + 0.05 * tt5),
-            "r6": - (0.001 * rd4 ** 2 + np.log10(rd4 ** 2 + 1e-6) + 0.01 * l6),
-            "r7": - (0.001 * rr4 ** 2 + np.log10(rr4 ** 2 + 1e-6) + 0.05 * tt7),
+            "r1": r1,
+            "r2": r2,
+            "r3": r3,
+            "r4": r4,
+            "r5": r5,
+            "r6": r6,
+            "r7": r7,
             # "r1": 0 ,
             # "r3": 0 ,
             # "r1": -self.dr_ratio*(0.001 * rr1 ** 2 + np.log10(rr1 ** 2 + 1e-6)),
@@ -315,6 +324,7 @@ class SpacerobotEnv(RobotEnv):
             # "r2": -rd2,
             # "r3": -rr2,
             "dense": -(0.001 * d ** 2 + np.log10(d ** 2 + 1e-6)),
+            "total":  (r0 + r1 + r2 + r3 + r4 + r5 + r6 + r7)
         }
         # print("r0: ",reward["r0"],"r1: ",reward["r1"],"r2: ",reward["r2"],"r3: ",reward["r3"])
         # print("r0=", 0.001 * rd1 ** 2 , np.log10(rd1 ** 2 + 1e-6) , 0.01 * l0)
@@ -522,33 +532,33 @@ class SpacerobotEnv(RobotEnv):
         goal_rot3 = np.array([0,0,0],dtype=np.float32)
         goal_rot4 = np.array([0,0,0],dtype=np.float32)
 
-        goal_pos1[0] = self.initial_gripper1_pos[0] + np.random.uniform(-0.05, 0.15)
-        goal_pos1[1] = self.initial_gripper1_pos[1] - np.random.uniform(0.15, 0.35)
-        goal_pos1[2] = self.initial_gripper1_pos[2] + np.random.uniform(-0.10, 0.10)
+        goal_pos1[0] = self.initial_gripper1_pos[0] + np.random.uniform(-0.05, 0.20)
+        goal_pos1[1] = self.initial_gripper1_pos[1] - np.random.uniform(0.10, 0.35)
+        goal_pos1[2] = self.initial_gripper1_pos[2] + np.random.uniform(-0.10, 0.15)
 
         goal_rot1[0] = self.initial_gripper1_rot[0] + np.random.uniform(-0.20, 0.30)
         goal_rot1[1] = self.initial_gripper1_rot[1] + np.random.uniform(-0.15, 0.35)
         goal_rot1[2] = self.initial_gripper1_rot[2] + np.random.uniform(-0.30, 0.20)
 
-        goal_pos2[0] = self.initial_gripper2_pos[0] + np.random.uniform(-0.05, 0.15) #two end-effectors have the same x
-        goal_pos2[1] = self.initial_gripper2_pos[1] + np.random.uniform(0.15, 0.35) #twp end-effector have opposite y (minus)
-        goal_pos2[2] = self.initial_gripper2_pos[2] - np.random.uniform(-0.10, 0.10) #two end-effector have different z 
+        goal_pos2[0] = self.initial_gripper2_pos[0] + np.random.uniform(-0.05, 0.20) #two end-effectors have the same x
+        goal_pos2[1] = self.initial_gripper2_pos[1] + np.random.uniform(0.10, 0.35) #twp end-effector have opposite y (minus)
+        goal_pos2[2] = self.initial_gripper2_pos[2] - np.random.uniform(-0.10, 0.15) #two end-effector have different z 
 
         goal_rot2[0] = self.initial_gripper2_rot[0] + np.random.uniform(-0.20, 0.30) #the difference between two arms:rotate along x axis with pi deg
         goal_rot2[1] = self.initial_gripper2_rot[1] - np.random.uniform(-0.15, 0.35) #So the target has opposite y and z.
         goal_rot2[2] = self.initial_gripper2_rot[2] - np.random.uniform(-0.30, 0.20)
 
-        goal_pos3[0] = self.initial_gripper3_pos[0] + np.random.uniform(-0.05, 0.15)
-        goal_pos3[1] = self.initial_gripper3_pos[1] - np.random.uniform(-0.10, 0.10)
-        goal_pos3[2] = self.initial_gripper3_pos[2] - np.random.uniform(0.15, 0.35)
+        goal_pos3[0] = self.initial_gripper3_pos[0] + np.random.uniform(-0.05, 0.20)
+        goal_pos3[1] = self.initial_gripper3_pos[1] - np.random.uniform(-0.10, 0.15)
+        goal_pos3[2] = self.initial_gripper3_pos[2] - np.random.uniform(0.10, 0.35)
 
         goal_rot3[0] = self.initial_gripper3_rot[0] + np.random.uniform(0.50, 1.00)
         goal_rot3[1] = self.initial_gripper3_rot[1] + np.random.uniform(-0.15, 0.35)
         goal_rot3[2] = self.initial_gripper3_rot[2] + np.random.uniform(-0.30, 0.20)
 
-        goal_pos4[0] = self.initial_gripper4_pos[0] + np.random.uniform(-0.05, 0.15)
-        goal_pos4[1] = self.initial_gripper4_pos[1] + np.random.uniform(-0.10, 0.10)
-        goal_pos4[2] = self.initial_gripper4_pos[2] + np.random.uniform(0.15, 0.35)
+        goal_pos4[0] = self.initial_gripper4_pos[0] + np.random.uniform(-0.05, 0.20)
+        goal_pos4[1] = self.initial_gripper4_pos[1] + np.random.uniform(-0.10, 0.15)
+        goal_pos4[2] = self.initial_gripper4_pos[2] + np.random.uniform(0.10, 0.35)
 
         goal_rot4[0] = self.initial_gripper4_rot[0] + np.random.uniform(0.50, 1.00) #the difference between two arms:rotate along x axis with pi deg
         goal_rot4[1] = self.initial_gripper4_rot[1] - np.random.uniform(-0.15, 0.35) #So the target has opposite y and z.
@@ -585,15 +595,6 @@ class SpacerobotEnv(RobotEnv):
         # goal_rot4[0] = self.initial_gripper4_rot[0] + np.random.uniform(0.50, 1.00) #the difference between two arms:rotate along x axis with pi deg
         # goal_rot4[1] = self.initial_gripper4_rot[1] - np.random.uniform(-0.15, 0.35) #So the target has opposite y and z.
         # goal_rot4[2] = self.initial_gripper4_rot[2] - np.random.uniform(-0.30, 0.20)
-
-        # goal_pos1 = np.array([0.3569468,   1.2775239,   4.3208117])
-        # goal_rot1 = np.array([0.2514714,  -0.1013594,   0.18483946])
-        # goal_pos2 = np.array([0.39633986, -1.23843396,  4.23199368])
-        # goal_rot2 = np.array([-0.13400188, -0.04475628,  0.12607676])
-        # goal_pos3 = np.array([0.27814835,  0.29937622,  5.246062])
-        # goal_rot3 = np.array([-1.0688201,   0.489479,    0.06324279])
-        # goal_pos4 = np.array([0.43091363,  0.28066614,  2.7131298])
-        # goal_rot4 = np.array([-1.14631516,  -0.05982002, -0.08541239])
 
         """
         goal = np.concatenate((goal_pos, goal_rot)) #一维度的数据不影响

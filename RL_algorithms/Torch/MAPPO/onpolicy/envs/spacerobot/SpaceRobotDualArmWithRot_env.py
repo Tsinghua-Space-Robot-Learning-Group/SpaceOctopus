@@ -54,27 +54,8 @@ class DualArmWithRot(object):
         #action:a list, contains num_agent elements,each element is a (single_action_dim,)shape array. 
         a = np.stack(actions)
         assert a.shape == (self.num_agents,self.single_action_dim)
-        # a0 = actions[0]
-        # a1 = np.zeros(3)
-        # a1 = actions[1]
-        # a2 = np.zeros(3)
-        # a2 = actions[1]
-        # a3 = np.zeros(3)
-        # a = [a0, a1, a2, a3]
-        # print(a)
-        # a = np.stack(a)
-        # print(a.shape)
         act = a.reshape(12,)
         observation, reward, done, info = self.env.step(act)
-        # print("outer loop step done: ",done)
-        # a = observation["achieved_goal"]
-        # d = observation["desired_goal"]
-        # rd1 = goal_distance(a[:3], d[:3])
-        # rr1 = 0.1 * goal_distance(a[3:6], d[3:6])
-        # print("achieved goal:",a,"\ndesired goal:",d)
-        # print(observation["observation_0"][25:28])
-        # print("r0:",- (0.001 * rd1 ** 2 + np.log10(rd1 ** 2 + 1e-6)))
-        # print("r1:", - (0.001 * rr1 ** 2 + np.log10(rr1 ** 2 + 1e-6)))
         for i in range(self.num_agents):
             sub_agent_obs.append(observation["observation_"+str(i)])
             sub_agent_reward.append(reward["r"+str(i)])

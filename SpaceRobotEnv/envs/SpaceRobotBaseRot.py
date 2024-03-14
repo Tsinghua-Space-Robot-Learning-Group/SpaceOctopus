@@ -151,7 +151,7 @@ class RobotEnv(gym.GoalEnv):
                 self._viewer_setup()
                 # self.viewer.cam.trackbodyid = 0
                 # latest modification
-                cam_pos = np.array([0, 0, 4, 4.2, -15, 160])
+                cam_pos = np.array([0, 0, 4, 4.5, -15, 160])
                 for i in range(3):
                     self.viewer.cam.lookat[i] = cam_pos[i]
                 self.viewer.cam.distance = cam_pos[3]
@@ -412,9 +412,9 @@ class SpacerobotEnv(RobotEnv):
 
     def _sample_goal(self):
         goal = np.array([0, 0, 0], dtype=np.float32)
-        goal[0] = self.initial_base_att[0] + np.random.uniform(-0.40, 0.40)
-        goal[1] = self.initial_base_att[1] + np.random.uniform(-0.40, 0.40)
-        goal[2] = self.initial_base_att[2] + np.random.uniform(-0.40, 0.40)
+        goal[0] = self.initial_base_att[0] + np.random.uniform(-0.20, 0.20)
+        goal[1] = self.initial_base_att[1] + np.random.uniform(-0.20, 0.20)
+        goal[2] = self.initial_base_att[2] + np.random.uniform(-0.20, 0.20)
         site_id = self.sim.model.site_name2id("targetbase")
         self.sim.model.site_pos[site_id] = np.array([0, 0, 4], dtype=np.float32)
         self.sim.model.site_quat[site_id] = rotations.euler2quat(goal.copy())
