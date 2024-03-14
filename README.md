@@ -2,50 +2,19 @@
 
 > Note: our repo can be found in the OpenAI Gym Documentation now. Please see [SpaceRobotEnv](https://www.gymlibrary.dev/environments/third_party_environments/#spacerobotenv).    
 
-**SpaceRobotEnv** is an open-sourced environments for trajectory planning of free-floating space robots.
-Different from the traditional robot, the free-floating space robot is a dynamic coupling system because of the non-actuated base, as shown in the figure below. 
+The SpaceOctopus environment is built upon our previous work [SpaceRobotEnv](https://github.com/Tsinghua-Space-Robot-Learning-Group/SpaceRobotEnv). SpaceRobotEnv is an open-sourced environments for trajectory planning of free-floating space robots.
+Different from the traditional robot, the free-floating space robot is a dynamic coupling system because of the non-actuated basew. 
 Therefore, model-based trajectory planning methods encounter many dif- ficulties in modeling and computing. 
-
-
-Accordingly, the researches focus on how to utilize the model-free methods, like reinforcement learning algorithms, to obtain the trajectory directly. 
-However, reaching high-level planning accuracy, bimanual coordination and end-to-end control remains an open challenge for space robotics researchers.
-To better help the community study this problem, SpaceRobotEnv are developed with the following key features:
+SpaceRobotEnv are developed with the following key features:
 * **Real Space Environment**: we construct environments similar to the space. The free-floating space robot is located in a low-gravity condition.
 * **Dynamic coupling control**: Compared with robots on the ground, the torques of joints have a significant impact on the posture of the base. The movement of the base makes a disturbance on the positions of end-effectors, thus leading to a more complex trajectory planning task. 
 * **Image input**: We provide the ability to use images as observations. And we also demonstrates our environment is effective, please see [our paper](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9550509).   
 
-- **Quick Demos**
-
-[Paper link](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9636681)
-<div align=center>
-<img src="SpaceRobotEnv/images/ral.gif" align="center" width="600"/>
-</div> 
-
-[Paper link](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9636681)
-<div align=center>
-<img src="SpaceRobotEnv/images/iros.gif" align="center" width="600"/>
-</div>
-
-[Paper link](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9550509)
-<div align=center>
-<img src="SpaceRobotEnv/images/ccc.png" align="center" width="600"/>
-</div>  
-
-Environments of this repo are as follows:
-* **SpaceRobotState-v0**
-    * State vector contains the angular positions and velocities of joints, the positions and velocities of end-effectors and the positions of goals. The core goal is to make the end-effector reach the goal randomly selected within a large space. 
-* **SpaceRobotCost-v0**
-    * The task is to make the end-effector reach a random goal while avoiding obvious movement of the base, especially for its orientation. Because the rotation of the base will cause the interruption of communication with the earth. 
-* **SpaceRobotImage-v0**
-    * State vector only contains images information. The core goal is the same as that of the `SpaceRobotState-v0` environment.
-* **SpaceRobotDualArm-v0**
-    * The free floating space robot owns two robotic arms which are attached with the base. That means two end-effectors are corresponding to two goal positions. 
-    When two end-effectors reach the goals together, the task is finished. 
-* **SpaceRobotReorientation-v0**
-    * The free floating space robot owns two robotic arms which are attached with the base. The inital orientation of the base is sampled randomly in each episode. 
-    When two arms help the base to reach the target orientation, the task is finished.     
-* **SpaceRobotPointCloud-v0**
-    * State vector contains the point colouds information. The core goal is the same as that of the `SpaceRobotState-v0` environment.
+The paper of SpaceOctopus can be found [here](https://arxiv.org/abs/2403.08219). In the paper, we observe that the octopus can elegantly conduct trajectory planning while adjusting its pose during grabbing prey or escaping from danger. 
+Inspired by the distributed control of octopuses' limbs, we develop a multi-level decentralized motion planning framework to manage the movement of different arms of space robots. 
+This motion planning framework integrates naturally with the multi-agent reinforcement learning (MARL) paradigm. 
+The results indicate that our method outperforms the previous method (centralized training). Leveraging the flexibility of the decentralized framework, we reassemble policies trained for different tasks, enabling the space robot to complete trajectory planning tasks while adjusting the base attitude without further learning. 
+Furthermore, our experiments confirm the superior robustness of our method in the face of external disturbances, changing base masses, and even the failure of one arm.
 
 ## Installation
 
@@ -59,6 +28,12 @@ After you finish the installation of the Mujoco and Gym and test some toy exampl
 pip install -e .
 ```
 
+Further, you also have to cd to the /onpolicy folder and run the same command to install the MAPPO package:
+```bash
+pip install -e .
+```
+More information about the MAPPO algorithm and the installation details can be found in the [original repo](https://github.com/marlbenchmark/on-policy).
+
 ## Quick Start
 
 We provide a Gym-Like API that allows us to get interacting information. `test_env.py` shows a toy example to verify the environments.
@@ -69,7 +44,7 @@ import gym
 import SpaceRobotEnv
 import numpy as np
 
-env = gym.make("SpaceRobotState-v0")
+env = gym.make("SpaceRobotBaseRot-v0")
 
 dim_u = env.action_space.shape[0]
 print(dim_u)
@@ -91,38 +66,29 @@ for e_step in range(20):
 env.close()
 ```
 
-## Introduction of free-floating space robot
+## Introduction of multi-arm space robot
 
-The free-floating space robot contains two parts, a robotic arm and a base satellite. The robot arm is rigidly connected with the base, and the whole space robot remains in a low-gravity condition.
-The 6-DoF UR5 model is chosen as the robot arm, and to simplify, we considered the base as a cubic structure. The specific structure is shown as follows.
+In the multi-arm space robot setting, four 6-degree-of-freedom (6-DoF) UR5 robotic arms are rigidly attached to the base of the space robot, with parameters identical to those of the actual robot. In the trajectory planning task, the goal for each end-effector is to reach a target randomly selected from an area within a 0.3 $\times$ 0.3 $\times$ 0.3 $\mathrm{m}^3$ cube positioned in front of each arm, along with a randomly sampled desired orientation. For the base reorientation task, the desired base attitude is randomly determined, ranging from -0.2 rad to 0.2 rad along every axis. The mass of the base is 400 kg with its size  0.8726 $\times$ 0.8726 $\times$ 0.8726 $\mathrm{m}^3$. Assuming the gripper of the robotic arm is insensitive to the shape of the object, we disregard the shape of grippers. Additionally, we omit the modeling of solar panels due to their negligible impact on the base, and the entire system is unaffected by gravity.
 
 <div align=center>
-<img src="SpaceRobotEnv/images/robot.png" align="center" width="600"/>
+<img src="render/fig.jpg" align="center" width="600"/>
 </div> 
 
-
-## Future plan
-
-
-### Tasks under development:  
-  - [x] Point cloud inputs
-  - [ ] Add new torque controllers, like impedance controller.
-  - [ ] Bulid new environments
-
-### Algorithms:
-  - [x] PPO
-  - [ ] TRPO
-  - [x] DDPG
-  - [ ] TD3
-  - [x] SAC
-  - [ ] HER
-  - [ ] [HDO](https://ieeexplore.ieee.org/abstract/document/9718193)
 
 ## Citing SpaceRobotEnv
 
 If you find SpaceRobotEnv useful, please cite our recent work in your publications. 
 
 ```
+@misc{zhao2024spaceoctopus,
+      title={SpaceOctopus: An Octopus-inspired Motion Planning Framework for Multi-arm Space Robot}, 
+      author={Wenbo Zhao and Shengjie Wang and Yixuan Fan and Yang Gao and Tao Zhang},
+      year={2024},
+      eprint={2403.08219},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO}
+}
+
 @article{wang2022collision,
   title={Collision-Free Trajectory Planning for a 6-DoF Free-Floating Space Robot via Hierarchical Decoupling Optimization},
   author={Wang, Shengjie and Cao, Yuxue and Zheng, Xiang and Zhang, Tao},
@@ -163,7 +129,7 @@ If you find SpaceRobotEnv useful, please cite our recent work in your publicatio
 ## The Team
 
 SpaceRobotEnv is a project maintained by 
-[Shengjie Wang](https://github.com/Shengjie-bob), [Xiang Zheng](https://github.com/x-zheng16), [Yuxue Cao](https://github.com/ShenGe123000) , [Fengbo Lan](https://github.com/lanrobot) at Tsinghua University. Also thanks a lot for the great contribution from [Tosin](https://github.com/tohsin)  .
+[Shengjie Wang](https://github.com/Shengjie-bob), [Xiang Zheng](https://github.com/x-zheng16), [Yuxue Cao](https://github.com/ShenGe123000) , [Fengbo Lan](https://github.com/lanrobot), [Wenbo Zhao](https://github.com/Githuber-zwb)  at Tsinghua University. Also thanks a lot for the great contribution from [Tosin](https://github.com/tohsin)  .
 
 
 ## License
