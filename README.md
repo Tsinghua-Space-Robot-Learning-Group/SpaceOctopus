@@ -98,9 +98,9 @@ In the multi-arm space robot setting, four 6-degree-of-freedom (6-DoF) UR5 robot
 </div> 
 
 
-## Citing SpaceRobotEnv
+## Citing SpaceOctopus
 
-If you find SpaceRobotEnv useful, please cite our recent work in your publications. 
+If you find SpaceOctopus useful, please cite our recent work in your publications. 
 
 ```
 @misc{zhao2024spaceoctopus,
